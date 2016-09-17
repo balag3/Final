@@ -45,6 +45,16 @@ class GameMenu():
                     done = True
                     sys.exit(0)
 
+            try:
+               pygame.joystick.init()
+               joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+               joysticks[0].init()
+               joysticks[1].init()
+               player1_joystick = joysticks[0]
+               player2_joystick = joysticks[1]
+            except IndexError:
+               player1_joystick = None
+               player2_joystick = None
 
 
             pressed = pygame.key.get_pressed()
@@ -57,14 +67,20 @@ class GameMenu():
                 running = False
                 sys.exit(0)
 
-            # Up
-            if pressed[pygame.K_10]:
-                main()
 
-            # Down
-            if pressed[pygame.K_11]:
-                running = False
-                sys.exit(0)
+            if event.type == pygame.JOYBUTTONDOWN:
+                if player1_joystick.get_button(0):
+                    running = False
+                    sys.exit(0)
+                if player2_joystick.get_button(0):
+                    running = False
+                    sys.exit(0)
+
+            if event.type == pygame.JOYBUTTONUP:
+                if player1_joystick.get_button(0):
+                    main()
+                if player2_joystick.get_button(0):
+                    main()
 
 
             # Redraw the background
