@@ -155,11 +155,6 @@ class Wall(pygame.sprite.Sprite):
         self.rect.x = x
 
 
-
-
-
-
-
 image_file = os.path.join('pictures/background.jpg')
 BackGround = Background(image_file, [-100, -100])
 
