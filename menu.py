@@ -44,6 +44,17 @@ class GameMenu():
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_0:
                     done = True
                     sys.exit(0)
+                    
+            try:
+               pygame.joystick.init()
+               joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+               joysticks[0].init()
+               joysticks[1].init()
+               player1_joystick = joysticks[0]
+               player2_joystick = joysticks[1]
+            except IndexError:
+               player1_joystick = None
+               player2_joystick = None
 
 
             pressed = pygame.key.get_pressed()
