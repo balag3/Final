@@ -2,12 +2,18 @@ import pygame
 from pygame.locals import *
 import random
 import os
+from os import path
 import time
 import math
 import copy
 
 # player = os.path.join('ball2.png')
 # ball = os.path.join('ball.bmp')
+
+
+snd_dir = os.path.join(path.dirname(__file__), 'snd')
+boom = os.path.join('./pictures/bumm.png')
+
 up = os.path.join('pictures/tank_up.png')
 down = os.path.join('pictures/tank_down.png')
 left = os.path.join('pictures/tank_left.png')
@@ -16,7 +22,7 @@ dl = os.path.join('pictures/tank_up_left.png')
 dr = os.path.join('pictures/tank_up_right.png')
 ul = os.path.join('pictures/tank_down_left.png')
 ur = os.path.join('pictures/tank_down_right.png')
-
+rock = os.path.join('pictures/rock.png')
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -117,6 +123,45 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 
+class Boom(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.image.load(boom)
+        self.rect = self.image.get_rect()
+        self.rect.x = x - self.rect.width/2
+        self.rect.y = y - self.rect.height/2
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        super().__init__()
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
+
+class Wall(pygame.sprite.Sprite):
+    """ Wall the player can run into. """
+    def __init__(self, x, y, width, height):
+        """ Constructor for the wall that the player can run into. """
+        # Call the parent's constructor
+        super().__init__()
+
+        # Make a blue wall, of the size specified in the parameters
+        self.image = pygame.image.load(rock)
+
+        # Make our top-left corner the passed-in location.
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+
+
+
+
+
+
+
+
+BackGround = Background("./pictures/background.jpg", [-100, -100])
 
 pygame.init()
 
@@ -124,12 +169,34 @@ screen_width = 1280
 screen_height = 800
 screen = pygame.display.set_mode([screen_width, screen_height])
 
+
+
+
+
+
+
+
+
+
+wall_list = pygame.sprite.Group()
 all_sprites_list = pygame.sprite.Group()
+p1_bullet = pygame.sprite.Group()
+p2_bullet = pygame.sprite.Group()
 bullet_list = pygame.sprite.Group()
 
-player = Player(10,10, [90, 4], 1)
-player2 = Player(200,200, [90, 4], 2)
+player = Player(50,screen_height/2, [0, 4], 1)
+player2 = Player(screen_width-50,screen_height/2, [180, 4], 2)
 all_sprites_list.add(player,player2)
+
+
+rock_wall = Wall(screen_width/2, screen_height/2,100,100)
+wall_list.add(rock_wall)
+all_sprites_list.add(rock_wall)
+
+
+
+
+
 done = False
 
 # Used to manage how fast the screen updates
@@ -137,6 +204,10 @@ clock = pygame.time.Clock()
 pygame.key.set_repeat(50,50)
 
 score = 0
+
+# sound
+shoot_snd = pygame.mixer.Sound(path.join(snd_dir, 'shoot.wav'))
+boom_snd = pygame.mixer.Sound(path.join(snd_dir, 'boom.aiff'))
 
 # joystick
 
@@ -195,10 +266,13 @@ while not done:
                 player2.move_right()
 
             if event.key == pygame.K_SPACE:
-                bullet = Bullet(player.rect.x, player.rect.y, player.dirvect, player.speed)
-                bullet2 = Bullet(player2.rect.x, player2.rect.y, player2.dirvect, player2.speed)
+                bullet = Bullet(player.rect.centerx, player.rect.centery, player.dirvect, player.speed)
+                bullet2 = Bullet(player2.rect.centerx, player2.rect.centery, player2.dirvect, player2.speed)
                 bullet_list.add(bullet, bullet2)
                 all_sprites_list.add(bullet, bullet2)
+                p1_bullet.add(bullet)
+                p2_bullet.add(bullet2)
+                shoot_snd.play(loops=0)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN or event.key == pygame.K_UP or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -251,23 +325,47 @@ while not done:
 
         if event.type == pygame.JOYBUTTONDOWN:
             if player1_joystick.get_button(0):
-                bullet = Bullet(player.rect.x, player.rect.y, player.dirvect, player.speed)
-                bullet_list.add(bullet)
+                bullet = Bullet(player.rect.centerx, player.rect.centery, player.dirvect, player.speed)
+                p1_bullet.add(bullet)
                 all_sprites_list.add(bullet)
+                bullet_list.add(bullet)
+                shoot_snd.play(loops=0)
 
             if player2_joystick.get_button(0):
-                bullet2 = Bullet(player2.rect.x, player2.rect.y, player2.dirvect, player2.speed)
+                bullet2 = Bullet(player2.rect.centerx, player2.rect.centery, player2.dirvect, player2.speed)
+                p2_bullet.add(bullet2)
                 bullet_list.add(bullet2)
                 all_sprites_list.add(bullet2)
+                shoot_snd.play(loops=0)
 
     all_sprites_list.update()
+
+    if pygame.sprite.spritecollide(player, p2_bullet, True):
+        boom1 = Boom(player.rect.centerx, player.rect.centery)
+        player.kill()
+        #screen.blit(boom1.image, boom1.rect)
+        all_sprites_list.add(boom1)
+        boom_snd.play(loops=0)
+
+    if pygame.sprite.spritecollide(player2, p1_bullet, True):
+        boom2 = Boom(player2.rect.centerx, player2.rect.centery)
+        #screen.blit(boom2.image, boom2.rect)
+        boom_snd.play(loops=0)
+        all_sprites_list.add(boom2)
+        player2.kill()
+
+    if pygame.sprite.groupcollide(bullet_list,wall_list,True,False):
+        pass
+
+
 
     for bullet in bullet_list:
         if bullet.rect.y < -10:
             bullet_list.remove(bullet)
             all_sprites_list.remove(bullet)
-    screen.fill(WHITE)
 
+    screen.fill([50, 50, 50])
+    screen.blit(BackGround.image, BackGround.rect)
     # Draw all the spites
     all_sprites_list.draw(screen)
 
@@ -275,6 +373,6 @@ while not done:
     pygame.display.flip()
 
     # --- Limit to 20 frames per second
-    clock.tick(60)
+    clock.tick(30)
 
 pygame.quit()
