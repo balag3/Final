@@ -352,6 +352,21 @@ while not done:
     if pygame.sprite.groupcollide(bullet_list,wall_list,True,False):
         pass
 
+    if pygame.sprite.spritecollide(player, wall_list, True):
+        boom1 = Boom(player.rect.centerx, player.rect.centery)
+        player.kill()
+        #screen.blit(boom1.image, boom1.rect)
+        all_sprites_list.add(boom1)
+        boom_snd.play(loops=0)
+
+    if pygame.sprite.spritecollide(player2, wall_list, True):
+        boom2 = Boom(player2.rect.centerx, player2.rect.centery)
+        #screen.blit(boom2.image, boom2.rect)
+        boom_snd.play(loops=0)
+        all_sprites_list.add(boom2)
+        player2.kill()
+
+
 
 
     for bullet in bullet_list:
