@@ -151,6 +151,9 @@ pygame.key.set_repeat(50,50)
 
 score = 0
 
+# sound
+shoot_snd = pygame.mixer.Sound(path.join(snd_dir, 'shoot.wav'))
+
 # joystick
 
 try:
@@ -212,6 +215,7 @@ while not done:
                 bullet2 = Bullet(player2.rect.x, player2.rect.y, player2.dirvect, player2.speed)
                 bullet_list.add(bullet, bullet2)
                 all_sprites_list.add(bullet, bullet2)
+                shoot_snd.play(loops=0)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN or event.key == pygame.K_UP or event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -267,11 +271,13 @@ while not done:
                 bullet = Bullet(player.rect.x, player.rect.y, player.dirvect, player.speed)
                 bullet_list.add(bullet)
                 all_sprites_list.add(bullet)
+                shoot_snd.play(loops=0)
 
             if player2_joystick.get_button(0):
                 bullet2 = Bullet(player2.rect.x, player2.rect.y, player2.dirvect, player2.speed)
                 bullet_list.add(bullet2)
                 all_sprites_list.add(bullet2)
+                shoot_snd.play(loops=0)
 
     all_sprites_list.update()
 
