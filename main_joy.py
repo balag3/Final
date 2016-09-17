@@ -22,7 +22,7 @@ dl = os.path.join('pictures/tank_up_left.png')
 dr = os.path.join('pictures/tank_up_right.png')
 ul = os.path.join('pictures/tank_down_left.png')
 ur = os.path.join('pictures/tank_down_right.png')
-
+rock = os.path.join('pictures/rock.png')
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -138,6 +138,29 @@ class Background(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
 
+
+class Wall(pygame.sprite.Sprite):
+    """ Wall the player can run into. """
+    def __init__(self, x, y, width, height):
+        """ Constructor for the wall that the player can run into. """
+        # Call the parent's constructor
+        super().__init__()
+
+        # Make a blue wall, of the size specified in the parameters
+        self.image = pygame.image.load(rock)
+
+        # Make our top-left corner the passed-in location.
+        self.rect = self.image.get_rect()
+        self.rect.y = y
+        self.rect.x = x
+
+
+
+
+
+
+
+
 BackGround = Background("./pictures/background.jpg", [-100, -100])
 
 pygame.init()
@@ -146,14 +169,34 @@ screen_width = 1280
 screen_height = 800
 screen = pygame.display.set_mode([screen_width, screen_height])
 
+
+
+
+
+
+
+
+
+
+wall_list = pygame.sprite.Group()
 all_sprites_list = pygame.sprite.Group()
 p1_bullet = pygame.sprite.Group()
 p2_bullet = pygame.sprite.Group()
 bullet_list = pygame.sprite.Group()
 
-player = Player(10,10, [90, 4], 1)
-player2 = Player(200,200, [90, 4], 2)
+player = Player(50,screen_height/2, [0, 4], 1)
+player2 = Player(screen_width-50,screen_height/2, [180, 4], 2)
 all_sprites_list.add(player,player2)
+
+
+rock_wall = Wall(screen_width/2, screen_height/2,100,100)
+wall_list.add(rock_wall)
+all_sprites_list.add(rock_wall)
+
+
+
+
+
 done = False
 
 # Used to manage how fast the screen updates
@@ -310,6 +353,10 @@ while not done:
         boom_snd.play(loops=0)
         all_sprites_list.add(boom2)
         player2.kill()
+
+    if pygame.sprite.groupcollide(bullet_list,wall_list,True,False):
+        pass
+
 
 
     for bullet in bullet_list:
