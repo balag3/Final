@@ -70,22 +70,22 @@ class Player(pygame.sprite.Sprite):
 
     def move_ul(self):
             self.image = pygame.image.load(ul)
-            self.dirvect[0] = -135
+            self.dirvect[0] = 135
             self.dirvect[1] = self.speed
 
     def move_ur(self):
             self.image = pygame.image.load(ur)
-            self.dirvect[0] = -45
+            self.dirvect[0] = 45
             self.dirvect[1] = self.speed
 
     def move_dl(self):
             self.image = pygame.image.load(dl)
-            self.dirvect[0] = 135
+            self.dirvect[0] = -135
             self.dirvect[1] = self.speed
 
     def move_dr(self):
             self.image = pygame.image.load(dr)
-            self.dirvect[0] = 45
+            self.dirvect[0] = -45
             self.dirvect[1] = self.speed
 
 # direct = [angle, speed]
