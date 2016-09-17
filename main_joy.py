@@ -12,6 +12,10 @@ up = os.path.join('pictures/tank_up.png')
 down = os.path.join('pictures/tank_down.png')
 left = os.path.join('pictures/tank_left.png')
 right = os.path.join('pictures/tank_right.png')
+ul = os.path.join('pictures/tank_up_left.png')
+ur = os.path.join('pictures/tank_up_right.png')
+dl = os.path.join('pictures/tank_down_left.png')
+dr = os.path.join('pictures/tank_down_right.png')
 
 
 BLACK = (0, 0, 0)
@@ -64,6 +68,25 @@ class Player(pygame.sprite.Sprite):
             self.dirvect[0] = 180
             self.dirvect[1] = self.speed
 
+    def move_ul(self):
+            self.image = pygame.image.load(ul)
+            self.dirvect[0] = -135
+            self.dirvect[1] = self.speed
+
+    def move_ur(self):
+            self.image = pygame.image.load(ur)
+            self.dirvect[0] = -45
+            self.dirvect[1] = self.speed
+
+    def move_dl(self):
+            self.image = pygame.image.load(dl)
+            self.dirvect[0] = 135
+            self.dirvect[1] = self.speed
+
+    def move_dr(self):
+            self.image = pygame.image.load(dr)
+            self.dirvect[0] = 45
+            self.dirvect[1] = self.speed
 
 # direct = [angle, speed]
 class Bullet(pygame.sprite.Sprite):
@@ -105,8 +128,8 @@ screen = pygame.display.set_mode([screen_width, screen_height])
 all_sprites_list = pygame.sprite.Group()
 bullet_list = pygame.sprite.Group()
 
-player = Player(10,10, [90, 7], 1)
-player2 = Player(200,200, [90, 7], 2)
+player = Player(10,10, [90, 4], 1)
+player2 = Player(200,200, [90, 4], 2)
 all_sprites_list.add(player,player2)
 done = False
 
@@ -187,30 +210,45 @@ while not done:
 
         if event.type == pygame.locals.JOYAXISMOTION:
             player1jx, player1jy = player1_joystick.get_axis(0), player1_joystick.get_axis(1)
-            if player1jx < 0:
+            if player1jx < 0 and player1jy == 0 :
                 player.move_left()
-            if player1jx > 0:
+            if player1jx > 0 and player1jy == 0:
                 player.move_right()
-            if player1jy < 0:
+            if player1jy < 0 and player1jx == 0:
                 player.move_up()
-            if player1jy > 0:
+            if player1jy > 0 and player1jx == 0:
                 player.move_down()
             if player1jx == 0 and player1jy == 0:
                 player.dirvect[1] = 0
-
+            if player1jx < 0 and player1jy < 0:
+                player.move_dl()
+            if player1jx > 0 and player1jy < 0:
+                player.move_dr()
+            if player1jx < 0 and player1jy > 0:
+                player.move_ul()
+            if player1jx > 0 and player1jy > 0:
+                player.move_ur()
 
         if event.type == pygame.locals.JOYAXISMOTION:
             player2jx, player2jy = player2_joystick.get_axis(0), player2_joystick.get_axis(1)
-            if player2jx < 0:
+            if player2jx < 0 and player2jy == 0 :
                 player2.move_left()
-            if player2jx > 0:
+            if player2jx > 0 and player2jy == 0:
                 player2.move_right()
-            if player2jy < 0:
+            if player2jy < 0 and player2jx == 0:
                 player2.move_up()
-            if player2jy > 0:
+            if player2jy > 0 and player2jx == 0:
                 player2.move_down()
             if player2jx == 0 and player2jy == 0:
                 player2.dirvect[1] = 0
+            if player2jx < 0 and player2jy < 0:
+                player2.move_dl()
+            if player2jx > 0 and player2jy < 0:
+                player2.move_dr()
+            if player2jx < 0 and player2jy > 0:
+                player2.move_ul()
+            if player2jx > 0 and player2jy > 0:
+                player2.move_ur()
 
         if event.type == pygame.JOYBUTTONDOWN:
             if player1_joystick.get_button(0):
