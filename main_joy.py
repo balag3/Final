@@ -12,17 +12,16 @@ up = os.path.join('pictures/tank_up.png')
 down = os.path.join('pictures/tank_down.png')
 left = os.path.join('pictures/tank_left.png')
 right = os.path.join('pictures/tank_right.png')
-ul = os.path.join('pictures/tank_up_left.png')
-ur = os.path.join('pictures/tank_up_right.png')
-dl = os.path.join('pictures/tank_down_left.png')
-dr = os.path.join('pictures/tank_down_right.png')
+dl = os.path.join('pictures/tank_up_left.png')
+dr = os.path.join('pictures/tank_up_right.png')
+ul = os.path.join('pictures/tank_down_left.png')
+ur = os.path.join('pictures/tank_down_right.png')
 
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-
 
 
 
@@ -93,7 +92,7 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y, dirvect, speed):
         super().__init__()
         self.dirvect = copy.deepcopy(dirvect)
-        self.dirvect[1] = speed * 3
+        self.dirvect[1] = speed * 1.7
         self.image = pygame.Surface([5, 5])
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()
