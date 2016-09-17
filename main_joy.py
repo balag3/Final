@@ -2,12 +2,17 @@ import pygame
 from pygame.locals import *
 import random
 import os
+from os import path
 import time
 import math
 import copy
 
 # player = os.path.join('ball2.png')
 # ball = os.path.join('ball.bmp')
+
+
+snd_dir = os.path.join(path.dirname(__file__), 'snd')
+
 up = os.path.join('pictures/tank_up.png')
 down = os.path.join('pictures/tank_down.png')
 left = os.path.join('pictures/tank_left.png')
@@ -117,6 +122,14 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 
+class Background(pygame.sprite.Sprite):
+    def __init__(self, image_file, location):
+        super().__init__()
+        self.image = pygame.image.load(image_file)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location
+
+BackGround = Background("./pictures/background.jpg", [-100, -100])
 
 pygame.init()
 
@@ -266,7 +279,9 @@ while not done:
         if bullet.rect.y < -10:
             bullet_list.remove(bullet)
             all_sprites_list.remove(bullet)
-    screen.fill(WHITE)
+
+    screen.fill([50, 50, 50])
+    screen.blit(BackGround.image, BackGround.rect)
 
     # Draw all the spites
     all_sprites_list.draw(screen)
