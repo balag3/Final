@@ -12,6 +12,7 @@ import copy
 
 
 snd_dir = os.path.join(path.dirname(__file__), 'snd')
+boom = os.path.join('./pictures/bumm.png')
 
 up = os.path.join('pictures/tank_up.png')
 down = os.path.join('pictures/tank_down.png')
@@ -122,6 +123,14 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 
+class Boom(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.image.load(boom)
+        self.rect = self.image.get_rect()
+        self.rect.x = x - self.rect.width/2
+        self.rect.y = y - self.rect.height/2
+
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file, location):
         super().__init__()
@@ -138,6 +147,8 @@ screen_height = 800
 screen = pygame.display.set_mode([screen_width, screen_height])
 
 all_sprites_list = pygame.sprite.Group()
+p1_bullet = pygame.sprite.Group()
+p2_bullet = pygame.sprite.Group()
 bullet_list = pygame.sprite.Group()
 
 player = Player(10,10, [90, 4], 1)
@@ -153,6 +164,7 @@ score = 0
 
 # sound
 shoot_snd = pygame.mixer.Sound(path.join(snd_dir, 'shoot.wav'))
+boom_snd = pygame.mixer.Sound(path.join(snd_dir, 'boom.aiff'))
 
 # joystick
 
@@ -211,10 +223,12 @@ while not done:
                 player2.move_right()
 
             if event.key == pygame.K_SPACE:
-                bullet = Bullet(player.rect.x, player.rect.y, player.dirvect, player.speed)
-                bullet2 = Bullet(player2.rect.x, player2.rect.y, player2.dirvect, player2.speed)
+                bullet = Bullet(player.rect.centerx, player.rect.centery, player.dirvect, player.speed)
+                bullet2 = Bullet(player2.rect.centerx, player2.rect.centery, player2.dirvect, player2.speed)
                 bullet_list.add(bullet, bullet2)
                 all_sprites_list.add(bullet, bullet2)
+                p1_bullet.add(bullet)
+                p2_bullet.add(bullet2)
                 shoot_snd.play(loops=0)
 
         if event.type == pygame.KEYUP:
@@ -268,18 +282,35 @@ while not done:
 
         if event.type == pygame.JOYBUTTONDOWN:
             if player1_joystick.get_button(0):
-                bullet = Bullet(player.rect.x, player.rect.y, player.dirvect, player.speed)
-                bullet_list.add(bullet)
+                bullet = Bullet(player.rect.centerx, player.rect.centery, player.dirvect, player.speed)
+                p1_bullet.add(bullet)
                 all_sprites_list.add(bullet)
+                bullet_list.add(bullet)
                 shoot_snd.play(loops=0)
 
             if player2_joystick.get_button(0):
-                bullet2 = Bullet(player2.rect.x, player2.rect.y, player2.dirvect, player2.speed)
+                bullet2 = Bullet(player2.rect.centerx, player2.rect.centery, player2.dirvect, player2.speed)
+                p2_bullet.add(bullet2)
                 bullet_list.add(bullet2)
                 all_sprites_list.add(bullet2)
                 shoot_snd.play(loops=0)
 
     all_sprites_list.update()
+
+    if pygame.sprite.spritecollide(player, p2_bullet, True):
+        boom1 = Boom(player.rect.centerx, player.rect.centery)
+        player.kill()
+        #screen.blit(boom1.image, boom1.rect)
+        all_sprites_list.add(boom1)
+        boom_snd.play(loops=0)
+
+    if pygame.sprite.spritecollide(player2, p1_bullet, True):
+        boom2 = Boom(player2.rect.centerx, player2.rect.centery)
+        #screen.blit(boom2.image, boom2.rect)
+        boom_snd.play(loops=0)
+        all_sprites_list.add(boom2)
+        player2.kill()
+
 
     for bullet in bullet_list:
         if bullet.rect.y < -10:
@@ -288,7 +319,6 @@ while not done:
 
     screen.fill([50, 50, 50])
     screen.blit(BackGround.image, BackGround.rect)
-
     # Draw all the spites
     all_sprites_list.draw(screen)
 
@@ -296,6 +326,6 @@ while not done:
     pygame.display.flip()
 
     # --- Limit to 20 frames per second
-    clock.tick(60)
+    clock.tick(30)
 
 pygame.quit()
