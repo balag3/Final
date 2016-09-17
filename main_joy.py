@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 import random
 import os
 import time
@@ -115,6 +116,37 @@ pygame.key.set_repeat(50,50)
 
 score = 0
 
+# joystick
+
+try:
+   pygame.joystick.init()
+   joysticks = [pygame.joystick.Joystick(x) for x in range(pygame.joystick.get_count())]
+   joysticks[0].init()
+   joysticks[1].init()
+   player1_joystick = joysticks[0]
+   player2_joystick = joysticks[1]
+except IndexError:
+   player1_joystick = None
+   player2_joystick = None
+
+"""while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            quit()
+        elif event.type == pygame.locals.JOYAXISMOTION:
+            player1jx, player1jy = player1_joystick.get_axis(0), player1_joystick.get_axis(1)
+            if player1jx < 0:
+                print("left")
+            if player1jx > 0:
+                print("right")
+            if player1jy < 0:
+                print("up")
+            if player1jy > 0:
+                print("down")
+        elif event.type == pygame.JOYBUTTONDOWN:
+            print(event)"""
+
+
 while not done:
     # --- Event Processing
 
@@ -152,6 +184,29 @@ while not done:
 
             if event.key == pygame.K_s or event.key == pygame.K_w or event.key == pygame.K_a or event.key == pygame.K_d:
                 player2.dirvect[1] = 0
+
+        if event.type == pygame.locals.JOYAXISMOTION:
+            player1jx, player1jy = player1_joystick.get_axis(0), player1_joystick.get_axis(1)
+            if player1jx < 0:
+                player.move_left()
+            if player1jx > 0:
+                player.move_right()
+            if player1jy < 0:
+                player.move_up()
+            if player1jy > 0:
+                player.move_down()
+
+        if event.type == pygame.locals.JOYAXISMOTION:
+            player2jx, player2jy = player2_joystick.get_axis(0), player2_joystick.get_axis(1)
+            if player2jx < 0:
+                player2.move_left()
+            if player2jx > 0:
+                player2.move_right()
+            if player2jy < 0:
+                player2.move_up()
+            if player2jy > 0:
+                player2.move_down()
+
 
     all_sprites_list.update()
 
