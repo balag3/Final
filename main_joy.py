@@ -22,7 +22,7 @@ dl = os.path.join('pictures/tank_up_left.png')
 dr = os.path.join('pictures/tank_up_right.png')
 ul = os.path.join('pictures/tank_down_left.png')
 ur = os.path.join('pictures/tank_down_right.png')
-rock = os.path.join('pictures/rock.png')
+rock = os.path.join('pictures/bomb.png')
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -54,9 +54,9 @@ class Player(pygame.sprite.Sprite):
         self.rect = new_pos
 
     def move_down(self):
-            self.image = pygame.image.load(down)
-            self.dirvect[0] = 90
-            self.dirvect[1] = self.speed
+        self.image = pygame.image.load(down)
+        self.dirvect[0] = 90
+        self.dirvect[1] = self.speed
 
     def move_up(self):
             self.image = pygame.image.load(up)
@@ -188,6 +188,13 @@ rock_wall = Wall(screen_width/2, screen_height/2,100,100)
 wall_list.add(rock_wall)
 all_sprites_list.add(rock_wall)
 
+rock_wall1 = Wall(200, 200,100,100)
+wall_list.add(rock_wall1)
+all_sprites_list.add(rock_wall1)
+
+rock_wall2 = Wall(900, 200,100,100)
+wall_list.add(rock_wall2)
+all_sprites_list.add(rock_wall2)
 
 
 
