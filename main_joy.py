@@ -165,14 +165,6 @@ screen_height = 800
 screen = pygame.display.set_mode([screen_width, screen_height])
 
 
-
-
-
-
-
-
-
-
 wall_list = pygame.sprite.Group()
 all_sprites_list = pygame.sprite.Group()
 p1_bullet = pygame.sprite.Group()
@@ -349,6 +341,7 @@ while not done:
         all_sprites_list.add(boom1)
         boom_snd.play(loops=0)
 
+
     if pygame.sprite.spritecollide(player2, p1_bullet, True):
         boom2 = Boom(player2.rect.centerx, player2.rect.centery)
         #screen.blit(boom2.image, boom2.rect)
@@ -356,22 +349,31 @@ while not done:
         all_sprites_list.add(boom2)
         player2.kill()
 
+
     if pygame.sprite.groupcollide(bullet_list,wall_list,True,False):
         pass
 
     if pygame.sprite.spritecollide(player, wall_list, True):
+        now1 = pygame.time.get_ticks()
         boom1 = Boom(player.rect.centerx, player.rect.centery)
         player.kill()
         #screen.blit(boom1.image, boom1.rect)
         all_sprites_list.add(boom1)
         boom_snd.play(loops=0)
+        now2 = pygame.time.get_ticks()
+        if now2 - now1 >= 200:
+            done = True
 
     if pygame.sprite.spritecollide(player2, wall_list, True):
+        now3 = pygame.time.get_ticks()
         boom2 = Boom(player2.rect.centerx, player2.rect.centery)
         #screen.blit(boom2.image, boom2.rect)
         boom_snd.play(loops=0)
         all_sprites_list.add(boom2)
         player2.kill()
+        now4 = pygame.time.get_ticks()
+        if now4 - now3 >= 200:
+            done = True
 
 
 
@@ -390,6 +392,6 @@ while not done:
     pygame.display.flip()
 
     # --- Limit to 20 frames per second
-    clock.tick(30)
+    clock.tick(40)
 
 pygame.quit()
