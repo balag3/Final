@@ -195,6 +195,9 @@ while not done:
                 player.move_up()
             if player1jy > 0:
                 player.move_down()
+            if player1jx == 0 and player1jy == 0:
+                player.dirvect[1] = 0
+
 
         if event.type == pygame.locals.JOYAXISMOTION:
             player2jx, player2jy = player2_joystick.get_axis(0), player2_joystick.get_axis(1)
@@ -206,7 +209,19 @@ while not done:
                 player2.move_up()
             if player2jy > 0:
                 player2.move_down()
+            if player2jx == 0 and player2jy == 0:
+                player2.dirvect[1] = 0
 
+        if event.type == pygame.JOYBUTTONDOWN:
+            if player1_joystick.get_button(0):
+                bullet = Bullet(player.rect.x, player.rect.y, player.dirvect, player.speed)
+                bullet_list.add(bullet)
+                all_sprites_list.add(bullet)
+
+            if player2_joystick.get_button(0):
+                bullet2 = Bullet(player2.rect.x, player2.rect.y, player2.dirvect, player2.speed)
+                bullet_list.add(bullet2)
+                all_sprites_list.add(bullet2)
 
     all_sprites_list.update()
 
